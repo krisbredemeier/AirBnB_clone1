@@ -122,11 +122,11 @@ def update_user_by_id():
 			if key == 'updated_at' or key == 'created_at':
 				 continue
 			else:
-				 setattr(user_found, key, request.values.get(key))
+				 setattr(user, key, request.values.get(key))
 		user.save()
 		return jsonify(user), 200
 	except:
-		return jsonify({'msg' : 'user not updated'}), 404
+		abort(404)
 
 
 @app.route('/users/<user_id>', methods=['DELETE'])
