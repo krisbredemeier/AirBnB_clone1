@@ -39,14 +39,14 @@ def list_user_by_id(user_id):
 def update_user_by_id():
 	user_ids = []
 	for key in request.values:
-		if key = 'email'
-			return jsonify('msg': 'email can not be changed'), 409
-		 if key == 'updated_at' or key == 'created_at':
+		if key == 'email':
+			return jsonify({'msg' : 'email can not be changed'}), 409
+		if key == 'updated_at' or key == 'created_at':
 			 continue
-		 else:
+		else:
 			 setattr(user_ids, key, request.values.get(key))
 	user.save()
-	return jsonify('msg' : 'user sucessfuly updated'), 200
+	return jsonify({'msg' : 'user sucessfuly updated'}), 200
 
 
 @app.route('/users/<user_id>', methods=['DELETE'])
@@ -56,6 +56,6 @@ def delete_user_by_id():
 		for user_id in User.select():
 			user_ids.delete_instance()
 			users.save()
-		return jsonify('code': 200, 'msg' : 'success'), 200
+	return jsonify({'code' : 200, 'msg' : 'success'}), 200
 	except:
-		return jsonify('code' : 404, 'msg' : 'not delted'), 404
+		return jsonify({'code' : 404, 'msg' : 'not delted'}), 404
