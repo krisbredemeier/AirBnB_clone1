@@ -56,6 +56,6 @@ def delete_user_by_id():
 		for user_id in User.select():
 			user_ids.delete_instance()
 			users.save()
-	return jsonify({'code' : 200, 'msg' : 'success'}), 200
+		return jsonify({'code' : 200, 'msg' : 'success'}), 200
 	except:
 		return jsonify({'code' : 404, 'msg' : 'not delted'}), 404
