@@ -70,9 +70,9 @@ def create_user():
 
 	try:
 		user = User.create(
-			email=str(request.form['email']),
 			first_name=str(request.form['first_name']),
 			last_name=str(request.form['last_name']),
+			email=str(request.form['email']),
 			password=str(request.form['password'])
 		)
 		return jsonify(user)
@@ -94,7 +94,7 @@ def list_user_by_id(user_id):
 	'''
 	try:
 		user = User.get(User.id == user_id)
-        return jsonify(user)
+    		return jsonify(user)
 	except:
 		abort(404)
 
@@ -131,23 +131,23 @@ def update_user_by_id():
 
 @app.route('/users/<user_id>', methods=['DELETE'])
 def delete_user_by_id():
-		'''
-		Delete user
-		Removes user specified by id from database
-		---
-		tags: - User
-		parameters:
-		responses:
-			200:
-				descripton: sucessfully deletes ueser
-			404:
-				descripton: user was not delted from database
-		'''
-	user = User.get(User.id == user_id)
+	'''
+	Delete user
+	Removes user specified by id from database
+	---
+	tags: - User
+	parameters:
+	responses:
+		200:
+			descripton: sucessfully deletes ueser
+		404:
+			descripton: user was not delted from database
+	'''
 	try:
+		user = User.get(User.id == user_id)
 		for user in User.select():
 			user_ids.delete_instance()
 			user.save()
 		return jsonify({'msg' : 'success'}), 200
 	except:
-		return jsonify({'msg' : 'not delted'}), 404
+		abort(404)
