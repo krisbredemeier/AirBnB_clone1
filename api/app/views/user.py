@@ -88,15 +88,12 @@ def list_user_by_id(user_id):
 	---
 	tags: User
 
-
 	'''
-	user_ids = User.get(User.id == user_id)
 	try:
-		for user_id in User.select():
-			user_ids.append(user_id.to_hash())
-		return jasonify(user_ids)
+		user = User.get(User.id == user_id)
+        return jsonify(user)
 	except:
-		return jsonify({'msg' : abort}), 404
+		abort(404)
 
 @app.route('/users/<user_id>', methods=['PUT'])
 def update_user_by_id():
