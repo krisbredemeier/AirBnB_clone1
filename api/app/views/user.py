@@ -17,11 +17,11 @@ def list_users():
 @app.route('/users', methods=['POST'])
 def create_user():
 	try:
-		new_user = User.create(
+		user = User.create(
 			email=str(request.form['email']),
-		    first_name=str(request.form['first_name']),
-		    last_name=str(request.form['last_name']),
-		    password=""
+			first_name=str(request.form['first_name']),
+			last_name=str(request.form['last_name']),
+			password=""
 		)
 	except:
 		return jsonify({'code' : 10000, 'msg' : "Email already exists"}), 409
@@ -38,11 +38,20 @@ def list_user_by_id(user_id):
 @app.route('/users/<user_id>', methods=['PUT'])
 def update_user_by_id():
 	user_ids = []
-	setattr(user_ids, key, value) for (key, value) in 
+	for key in request.values:
+		if key = 'email'
+			return jsonify('msg': 'email can not be changed'), 409
+		 if key == 'updated_at' or key == 'created_at':
+			 continue
+		 else:
+			 setattr(user_ids, key, request.values.get(key))
+	user.save()
+	return jsonify('msg' : 'user sucessfuly updated'), 200
 
 
 @app.route('/users/<user_id>', methods=['DELETE'])
 def delete_user_by_id():
+	user_ids = []
 	try:
 		for user_id in User.select():
 			user_ids.delete_instance()
