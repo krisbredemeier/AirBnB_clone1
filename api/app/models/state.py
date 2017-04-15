@@ -1,9 +1,13 @@
 import peewee
-
+from app.models.base import BaseModel
 
 class State(BaseModel):
-    name = CharField(128, null = False, unique = True)
+    name = peewee.CharField(128, null = False, unique = True)
 
+
+    def __init__(self, *args, **kwargs):
+        super(BaseModel, self).__init__()
+        
     def to_hash(self):
         return {
             "id": self.__id,

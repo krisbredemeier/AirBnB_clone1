@@ -1,7 +1,7 @@
 import peewee
-import place
-from user import *
-from place import Place
+from app.models.base import BaseModel
+from app.models.place import Place
+from app.models.user import User
 
 
 class PlaceBook(BaseModel):
@@ -11,6 +11,9 @@ class PlaceBook(BaseModel):
     date_start = peewee.DateTimeField(null = False)
     number_nights = peewee.IntegerField(default = 1)
 
+    def __init__(self, *args, **kwargs):
+        super(BaseModel, self).__init__()
+        
     def to_hash(self):
         return {
             "id": self.__id,

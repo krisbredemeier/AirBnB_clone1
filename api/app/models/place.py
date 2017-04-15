@@ -1,11 +1,12 @@
 import peewee
-from user import *
-from city import *
+from app.models.base import BaseModel
+from app.models.user import User
+from app.models.city import City
 
 
 class Place(BaseModel):
     owner = peewee.ForeignKeyField(User, related_name = "places")
-    city = peewee.ForeignKeyField(User, related_name = "places")
+    city = peewee.ForeignKeyField(City, related_name = "places")
     name = peewee.CharField(128, null=False)
     description = peewee.TextField()
     number_rooms = peewee.IntegerField(default = 0)
@@ -15,6 +16,10 @@ class Place(BaseModel):
     latitude = peewee.FloatField()
     longitude = peewee.FloatField()
 
+
+    def __init__(self, *args, **kwargs):
+        super(BaseModel, self).__init__()
+        
     def to_hash(self):
         return {
             "id": self.__id,

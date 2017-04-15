@@ -1,29 +1,29 @@
 import peewee
 import md5
-
+from app.models.base import BaseModel
 # database = peewee.SqliteDatabase("database",  pragmas=(('foreign_keys', True), ))
 
 
-class USER (BaseModel):
+class User (BaseModel):
     email = peewee.CharField(128, null=False, unique=True)
     password = peewee.CharField(128, null=False)
     first_name = peewee.CharField(128, null=False)
     last_name = peewee.CharField(128, null=False)
     is_admin = peewee.BooleanField(default=False)
-    if email is
-    return json_response(users)
-    return json_response(code= 1000, msg="Email already exists")
+
+    def __init__(self, *args, **kwargs):
+        super(BaseModel, self).__init__()
 
     def set_password(self, clear_password):
         self.pasword = md5.new(clear_password).hexidigest()
 
     def to_hash(self):
         return {
-            "id": self.__id,
-            "created_at": self.__created_at,
-            "updated_at": self.__updated_at,
-            "email": self.__email,
-            "first_name": self.__first_name
-            "last_name": self.__last_name
-            "is_admin": self.__is_admin,
+            "id": self.id,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+            "email": self.email,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "is_admin": self.is_admin
         }
