@@ -97,6 +97,13 @@ def list_user_by_id(user_id):
 
 @app.route('/users/<user_id>', methods=['PUT'])
 def update_user_by_id():
+	'''
+	Update user
+	Updates existing user and appends to database
+	---
+	tags: - User
+	parameters:
+	'''
 	try:
 		user = User.get(User.id == user_id)
 		for key in request.values:
@@ -114,6 +121,13 @@ def update_user_by_id():
 
 @app.route('/users/<user_id>', methods=['DELETE'])
 def delete_user_by_id():
+		'''
+		Delete user
+		Removes user specified by id from database
+		---
+		tags: - User
+		parameters:
+		'''
 	user = User.get(User.id == user_id)
 	try:
 		for user in User.select():
