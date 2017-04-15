@@ -29,22 +29,24 @@ def create_user():
 
 @app.route('/users/<user_id>', methods=['GET'])
 def list_user_by_id(user_id):
-	user_id = []
+	user_ids = []
 	for user_id in User.select():
-		users.append(user_id.to_hash())
-	return jasonify(user_id)
+		user_ids.append(user_id.to_hash())
+	return jasonify(user_ids)
 
 
 @app.route('/users/<user_id>', methods=['PUT'])
 def update_user_by_id():
-	# TODO
-	pass
+	user_ids = []
+	setattr(user_ids, key, value) for (key, value) in 
+
 
 @app.route('/users/<user_id>', methods=['DELETE'])
 def delete_user_by_id():
 	try:
 		for user_id in User.select():
-			users.delete_instance()
+			user_ids.delete_instance()
+			users.save()
 		return jsonify('code': 200, 'msg' : 'success'), 200
 	except:
 		return jsonify('code' : 404, 'msg' : 'not delted'), 404
