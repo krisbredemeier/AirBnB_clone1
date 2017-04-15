@@ -16,8 +16,16 @@ def list_users():
 
 @app.route('/users', methods=['POST'])
 def create_user():
-	# TODO
-	pass
+	try:
+		new_user = User.create(
+			email=str(request.form['email']),
+		    first_name=str(request.form['first_name']),
+		    last_name=str(request.form['last_name']),
+		    password=""
+		)
+	except:
+		return jsonify({'code' : 10000, 'msg' : "Email already exists"}), 409
+
 
 @app.route('/users/<user_id>', methods=['GET'])
 def list_user_by_id(user_id):
@@ -34,5 +42,9 @@ def update_user_by_id():
 
 @app.route('/users/<user_id>', methods=['DELETE'])
 def delete_user_by_id():
-	# TODO
-	pass
+	try:
+		for user_id in User.select():
+			users.delete_instance()
+		return jsonify('code': 200, 'msg' : 'success'), 200
+	except:
+		return jsonify('code' : 404, 'msg' : 'not delted'), 404
