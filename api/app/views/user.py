@@ -87,6 +87,9 @@ def list_user_by_id(user_id):
 	list of the given user using user_id in databse
 	---
 	tags: User
+	responses:
+		404:
+		descripton: aboarts route, can not list user by id
 
 	'''
 	try:
@@ -103,6 +106,13 @@ def update_user_by_id():
 	---
 	tags: - User
 	parameters:
+	responses:
+		409:
+			descripton: notify that the email can not be changed
+		200:
+			descripton: user was sucessfully updated
+		404:
+			descripton: user was not updated, error occured
 	'''
 	try:
 		user = User.get(User.id == user_id)
@@ -127,12 +137,17 @@ def delete_user_by_id():
 		---
 		tags: - User
 		parameters:
+		responses:
+			200:
+				descripton: sucessfully deletes ueser
+			404:
+				descripton: user was not delted from database
 		'''
 	user = User.get(User.id == user_id)
 	try:
 		for user in User.select():
 			user_ids.delete_instance()
 			user.save()
-		return jsonify({'code' : 200, 'msg' : 'success'}), 200
+		return jsonify({'msg' : 'success'}), 200
 	except:
-		return jsonify({'code' : 404, 'msg' : 'not delted'}), 404
+		return jsonify({'msg' : 'not delted'}), 404
