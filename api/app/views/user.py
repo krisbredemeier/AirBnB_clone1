@@ -9,13 +9,67 @@ from app.models.state import State
 
 @app.route('/users', methods=['GET'])
 def list_users():
+	'''
+	Get all users
+	This will list all users in the database
+	---
+	tags: - User
+	responses:
+      200:
+        description: return list of all users
+        schema:
+          id: Users
+          properties:
+		  	users:
+              type: array
+              description: array of users
+	'''
 	users = []
 	for user in User.select():
 		users.append(user.to_hash())
-	return jsonify(users)
+	return jsonify(users), 200
 
 @app.route('/users', methods=['POST'])
 def create_user():
+	'''
+	Create a new user
+	Creates a new users and appends to database
+	---
+	tags: - User
+	parameters:
+		-
+			name: email
+			in: form
+			type: string
+			required: True
+			description: email of the user
+
+		-
+			name: frist_name
+			in: form
+			type: string
+			required: True
+			description: first name of the user
+		-
+			name: last_name
+			in: form
+			type: string
+			required: True
+			description: last name of the user
+		-
+			name: password
+			in: form
+			type: string
+			required: True
+			description: password of the user
+
+	responses:
+		409:
+			description: email already exists
+
+
+	'''
+
 	try:
 		user = User.create(
 			email=str(request.form['email']),
