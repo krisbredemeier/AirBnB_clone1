@@ -97,25 +97,28 @@ def list_user_by_id(user_id):
 
 @app.route('/users/<user_id>', methods=['PUT'])
 def update_user_by_id():
-	user_ids = User.get(User.id == user_id)
-	for key in request.values:
-		if key == 'email':
-			return jsonify({'msg' : 'email can not be changed'}), 409
-		if key == 'updated_at' or key == 'created_at':
-			 continue
-		else:
-			 setattr(user_found, key, request.values.get(key))
-	user.save()
-	return jsonify(user), 200
+	try:
+		user = User.get(User.id == user_id)
+		for key in request.values:
+			if key == 'email':
+				return jsonify({'msg' : 'email can not be changed'}), 409
+			if key == 'updated_at' or key == 'created_at':
+				 continue
+			else:
+				 setattr(user_found, key, request.values.get(key))
+		user.save()
+		return jsonify(user), 200
+	except:
+		return jsonify({'msg' : 'user not updated'}), 404
 
 
 @app.route('/users/<user_id>', methods=['DELETE'])
 def delete_user_by_id():
-	user_ids = User.get(User.id == user_id)
+	user = User.get(User.id == user_id)
 	try:
-		for user_id in User.select():
+		for user in User.select():
 			user_ids.delete_instance()
-			users.save()
+			user.save()
 		return jsonify({'code' : 200, 'msg' : 'success'}), 200
 	except:
 		return jsonify({'code' : 404, 'msg' : 'not delted'}), 404
