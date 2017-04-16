@@ -28,6 +28,9 @@ def list_places():
 		places.append(place.to_hash())
 	return jsonify(places), 200
 
+@app.route('/places', methods=['POST'])
+def creat_place():
+
 @app.route('/places/<place_id>', methods=['GET'])
 def get_place_by_id(place_id):
 	"""
@@ -56,3 +59,41 @@ def get_place_by_id(place_id):
 		return jsonify(place.to_hash())
 	except:
 		abort(404)
+
+@app.route('/places/<place_id>', methods=['PUTS'])
+def update_place(place_id):
+
+@app.route('/places/<place_id>', methods=['DELETE'])
+def delete_place_by_id(state_id):
+	"""
+	Delete place
+	Removes place specified by id from database
+	---
+	tags:
+		- place
+	parameters:
+		-
+			name: place_id
+			in: path
+			type: integer
+			required: True
+			description: place id
+	responses:
+		200:
+			descripton: sucessfully deletes place
+		404:
+			descripton: state was not delted from database
+	"""
+	try:
+		place = Place.get(Place.id == place_id)
+		place.delete_instance()
+		return jsonify({'msg' : 'success'}), 200
+	except:
+		abort(404)
+
+@app.route('/states/<state_id>/cities/<city_id>/places', methods=['GET'])
+def list_place_by_city(city_id):
+
+
+@app.route('/states/<state_id>/cities/<city_id>/places', methods=['POST'])
+def creae_new_place(city_id):
