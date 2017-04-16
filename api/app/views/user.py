@@ -207,7 +207,7 @@ def delete_user_by_id(user_id):
 			description: user id
 	responses:
 		200:
-			descripton: sucessfully deletes ueser
+			descripton: sucessfully deletes user
 		404:
 			descripton: user was not delted from database
 	"""
