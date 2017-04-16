@@ -12,7 +12,7 @@ class PlaceBook(BaseModel):
     number_nights = peewee.IntegerField(default = 1)
 
     def __init__(self, *args, **kwargs):
-        super(BaseModel, self).__init__()
+        super(BaseModel, self).__init__(args, kwargs)
         
     def to_hash(self):
         return {

@@ -9,4 +9,4 @@ class PlaceAmenity(peewee.Model):
     amenity = peewee.ForeignKeyField(Amenity)
 
     def __init__(self, *args, **kwargs):
-        super(BaseModel, self).__init__()
+        super(BaseModel, self).__init__(args, kwargs)

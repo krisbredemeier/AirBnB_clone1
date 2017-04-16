@@ -1,5 +1,5 @@
 import peewee
-import md5
+import hashlib
 from app.models.base import BaseModel
 # database = peewee.SqliteDatabase("database",  pragmas=(('foreign_keys', True), ))
 
@@ -12,10 +12,13 @@ class User (BaseModel):
     is_admin = peewee.BooleanField(default=False)
 
     def __init__(self, *args, **kwargs):
-        super(BaseModel, self).__init__()
+        super(BaseModel, self).__init__(args, kwargs)
+        if kwargs is not None:	
+            for k, v in kwargs.items():
+                setattr(self, k, v)
 
     def set_password(self, clear_password):
-        self.pasword = md5.new(clear_password).hexidigest()
+        self.pasword = hashlib.md5(clear_password.encode()).hexdigest()
 
     def to_hash(self):
         return {

@@ -1,11 +1,21 @@
 from flask import Flask
 from flask_json import FlaskJSON
 from config import *
-# from flasgger import Swagger
+from flasgger import Swagger
 
-# __all__ = ["config"]
 
 app = Flask(__name__)
+
+app.config['SWAGGER'] = {
+    "swagger_version": "2.0"
+}
+Swagger(app)
+
 FlaskJSON(app)
 
-from views import *
+
+
+
+from app.views import *
+
+

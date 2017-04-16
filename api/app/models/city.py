@@ -8,7 +8,7 @@ class City(BaseModel):
     state = peewee.ForeignKeyField(State, related_name='cities', on_delete = "CASCADE")
 
     def __init__(self, *args, **kwargs):
-        super(BaseModel, self).__init__()
+        super(BaseModel, self).__init__(args, kwargs)
         
     def to_hash(self):
         return {
