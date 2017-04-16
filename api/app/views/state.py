@@ -23,7 +23,7 @@ def list_states():
 	"""
 	states = []
 	for state in State.select():
-		state.append(state.to_hash())
+		states.append(state.to_hash())
 	return jsonify(states), 200
 
 @app.route('/states', methods=['POST'])
@@ -69,18 +69,48 @@ def create_state():
     """
 	try:
 		state = State(
-			state_name=str(request.form['state_name']),
+			state_name=str(request.form['name']),
 		)
-		user.save()
+		state.save()
 		return jsonify(state.to_hash())
 	except:
 		import sys
 		print("Unexpected error:", sys.exc_info())
 
-		return jsonify({'code' : 10000, 'msg' : "Email already exists"}), 409
+		return jsonify({'code' : 10000, 'msg' : "State name already exhists"}), 409
 
 @app.route('/states/<state_id>', methods=['GET'])
-def list_state_by_id(user_id):
+def get_state_by_id(state_id):
+	"""
+	Get state by id
+	list of the given state using state_id in databse
+	---
+	tags:
+		- state
+	parameters:
+		-
+			name: state_id
+			in: path
+			type: integer
+			required: True
+			description: state id
+	responses:
+		200:
+			description: the State representation
+			schema:
+				$ref: '#/definitions/State'
+		404:
+			descripton: aboarts route, can not list user by id
+	"""
+	try:
+		state = State.get(State.id == state_id)
+		return jsonify(state.to_hash())
+	except:
+		abort(404)
+
+
+@app.route('/states/<state_id>', methods=['PUT'])
+def update_state_by_id(state_id):
 	"""
 	Update state
 	Updates existing state and appends to database
@@ -107,7 +137,7 @@ def list_state_by_id(user_id):
 	try:
 		state = State.get(State.id == state_id)
 		for key in request.values:
-			if key == 'state_name':
+			if key == 'name':
 				return jsonify({'msg' : 'Name is already taken'}), 409
 			if key == 'updated_at' or key == 'created_at':
 				 continue
