@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, abort
 from flask_json import FlaskJSON, json_response
 import peewee
 from app import app
@@ -9,21 +9,20 @@ from app.models.state import State
 
 @app.route('/users', methods=['GET'])
 def list_users():
-	'''
+	"""
 	Get all users
 	This will list all users in the database
 	---
-	tags: - User
+	tags: 
+		- user
 	responses:
-      200:
-        description: return list of all users
-        schema:
-          id: Users
-          properties:
-		  	users:
-              type: array
-              description: array of users
-	'''
+		200:
+			description: return list of all users
+			schema:
+				type: array
+				items:
+					$ref: '#/definitions/User'
+	"""
 	users = []
 	for user in User.select():
 		users.append(user.to_hash())
@@ -31,11 +30,12 @@ def list_users():
 
 @app.route('/users', methods=['POST'])
 def create_user():
-	'''
+	"""
 	Create a new user
 	Creates a new users and appends to database
 	---
-	tags: - User
+	tags: 
+		- user
 	parameters:
 		-
 			name: email
@@ -43,7 +43,6 @@ def create_user():
 			type: string
 			required: True
 			description: email of the user
-
 		-
 			name: frist_name
 			in: form
@@ -62,58 +61,120 @@ def create_user():
 			type: string
 			required: True
 			description: password of the user
-
 	responses:
+		200:
+			description: the User representation
+			schema:
+				id: User
+				properties:
+					id:
+						type: number
+						description: Unique identifier
+						required: true
+					created_at:
+						type: date-time
+						description: Datetime of the item creation 
+						required: true
+					updated_at:
+						type: date-time
+						description: Datetime of the last item update 
+						required: true
+					email:
+						type: string
+						description: Email of the user
+						required: true
+					first_name:
+						type: string
+						description: First name of the user
+						required: false
+					last_name:
+						type: string
+						description: Last name of the user
+						required: false
+					password:
+						type: string
+						description: Password of the user, MD5 encoded
+						required: true
+					is_admin:
+						type: boolean
+						description: Define if the user is admin
+						required: true
 		409:
 			description: email already exists
-	'''
+	"""
 
 	try:
-		user = User.create(
+		user = User(
 			first_name=str(request.form['first_name']),
 			last_name=str(request.form['last_name']),
 			email=str(request.form['email']),
+			is_admin=False,
 			password=str(request.form['password'])
 		)
-		return jsonify(user)
+		user.set_password(str(request.form['password']))
+		user.save()
+		return jsonify(user.to_hash())
 	except:
+		import sys
+		print("Unexpected error:", sys.exc_info())
+		
 		return jsonify({'code' : 10000, 'msg' : "Email already exists"}), 409
 
 
 @app.route('/users/<user_id>', methods=['GET'])
 def list_user_by_id(user_id):
-	'''
+	"""
 	Get user by id
 	list of the given user using user_id in databse
 	---
-	tags: User
+	tags:
+		- user
+	parameters:
+		-
+			name: user_id
+			in: path
+			type: integer
+			required: True
+			description: user id
 	responses:
+		200:
+			description: the User representation
+			schema:
+				$ref: '#/definitions/User'
 		404:
-		descripton: aboarts route, can not list user by id
-
-	'''
+			descripton: aboarts route, can not list user by id
+	"""
 	try:
 		user = User.get(User.id == user_id)
-    		return jsonify(user)
+		return jsonify(user.to_hash())
 	except:
 		abort(404)
 
 @app.route('/users/<user_id>', methods=['PUT'])
-def update_user_by_id():
-	'''
+def update_user_by_id(user_id):
+	"""
 	Update user
 	Updates existing user and appends to database
 	---
-	tags: - User
+	tags: 
+		- user
 	parameters:
+		-
+			name: user_id
+			in: path
+			type: integer
+			required: True
+			description: user id
 	responses:
 		409:
 			descripton: notify that the email can not be changed
 		200:
-			descripton: user was sucessfully updated
+			description: the User representation
+			schema:
+				$ref: '#/definitions/User'
 		404:
 			descripton: user was not updated, error occured
-	'''
+	"""
 	try:
 		user = User.get(User.id == user_id)
 		for key in request.values:
@@ -124,30 +185,35 @@ def update_user_by_id():
 			else:
 				 setattr(user, key, request.values.get(key))
 		user.save()
-		return jsonify(user), 200
+		return jsonify(user.to_hash()), 200
 	except:
 		abort(404)
 
 
 @app.route('/users/<user_id>', methods=['DELETE'])
-def delete_user_by_id():
-	'''
+def delete_user_by_id(user_id):
+	"""
 	Delete user
 	Removes user specified by id from database
 	---
-	tags: - User
+	tags: 
+		- user
 	parameters:
+		-
+			name: user_id
+			in: path
+			type: integer
+			required: True
+			description: user id
 	responses:
 		200:
 			descripton: sucessfully deletes ueser
 		404:
 			descripton: user was not delted from database
-	'''
+	"""
 	try:
 		user = User.get(User.id == user_id)
-		for user in User.select():
-			user_ids.delete_instance()
-			user.save()
+		user.delete_instance()
 		return jsonify({'msg' : 'success'}), 200
 	except:
 		abort(404)

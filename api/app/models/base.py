@@ -17,10 +17,8 @@ class BaseModel(peewee.Model):
 	created_at = peewee.DateTimeField(default = datetime.now().strftime('%Y/%m/%d %H:%M;%S'))
 
 	# init func
-	def __init__(self):
+	def __init__(self, *args, **kwargs):
 		pass
-
-	# unique id for tables
 
 	# save func TODO more comments
 	def save(self):
