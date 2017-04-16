@@ -13,7 +13,7 @@ def list_users():
 	Get all users
 	This will list all users in the database
 	---
-	tags: 
+	tags:
 		- user
 	responses:
 		200:
@@ -34,7 +34,7 @@ def create_user():
 	Create a new user
 	Creates a new users and appends to database
 	---
-	tags: 
+	tags:
 		- user
 	parameters:
 		-
@@ -73,11 +73,11 @@ def create_user():
 						required: true
 					created_at:
 						type: date-time
-						description: Datetime of the item creation 
+						description: Datetime of the item creation
 						required: true
 					updated_at:
 						type: date-time
-						description: Datetime of the last item update 
+						description: Datetime of the last item update
 						required: true
 					email:
 						type: string
@@ -117,8 +117,8 @@ def create_user():
 	except:
 		import sys
 		print("Unexpected error:", sys.exc_info())
-		
-		return jsonify({'code' : 10000, 'msg' : "Email already exists"}), 409
+
+		return jsonify({'code' : 10001, 'msg' : "State already exists""}), 409
 
 
 @app.route('/users/<user_id>', methods=['GET'])
@@ -156,7 +156,7 @@ def update_user_by_id(user_id):
 	Update user
 	Updates existing user and appends to database
 	---
-	tags: 
+	tags:
 		- user
 	parameters:
 		-
@@ -196,7 +196,7 @@ def delete_user_by_id(user_id):
 	Delete user
 	Removes user specified by id from database
 	---
-	tags: 
+	tags:
 		- user
 	parameters:
 		-
