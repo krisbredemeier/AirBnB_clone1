@@ -4,6 +4,8 @@ import peewee
 from app import app
 from app.models.user import User
 from app.models.state import State
+from app.models.place import Place
+from app.models.city import City
 
 
 
@@ -130,9 +132,9 @@ def update_place_by_id(place_id):
         409:
             descripton: notify that owner and city can't be changed
         200:
-            description: the User representation
+            description: the Place representation
             schema:
-                $ref: '#/definitions/User'
+                $ref: '#/definitions/Place'
         404:
             descripton: user was not updated, error occured
     """
@@ -144,7 +146,7 @@ def update_place_by_id(place_id):
             if key == 'updated_at' or key == 'created_at':
                  continue
             else:
-                 setattr(user, key, request.values.get(key))
+                 setattr(place, key, request.values.get(key))
         place.save()
         return jsonify(place.to_hash()), 200
     except:
