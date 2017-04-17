@@ -29,10 +29,10 @@ def list_city_by_state(state_id):
 			schema:
 				$ref: '#/definitions/City'
 		404:
-			descripton: aboarts route, can not list user by id
+			descripton: aboarts route, can not list city by id
 	"""
 	try:
-		user = City.get(State.id == state_id)
+		city = City.get(State.id == state_id)
 		return jsonify(city.to_hash())
 	except:
 		abort(404)
@@ -51,13 +51,13 @@ def create_city():
             in: form
             type: string
             required: True
-            description: the name of the state
+            description: the name of the city
 
     responses:
         200:
-            description: the User representation
+            description: the City representation
             schema:
-                id: User
+                id: City
                 properties:
                     id:
                         type: number
@@ -76,7 +76,7 @@ def create_city():
                         description: name of the city
                         required: true
         409:
-            description: email already exists
+            description: city already exists
     """
 	try:
 		city = City(
@@ -93,8 +93,8 @@ def create_city():
 @app.route('/states/<state_id>/cities/<city_id>', methods=['GET'])
 def get_city_by_id(city_id):
 	"""
-	Get city by using state id
-	list of the given state using state_id in databse
+	Get city by using city id
+	list of the given city using city_id in databse
 	---
 	tags:
 		- city
@@ -104,14 +104,14 @@ def get_city_by_id(city_id):
 			in: path
 			type: integer
 			required: True
-			description: state id
+			description: city id
 	responses:
 		200:
 			description: the City representation
 			schema:
 				$ref: '#/definitions/City'
 		404:
-			descripton: aboarts route, can not list user by id
+			descripton: aboarts route, can not list city by id
 	"""
 	try:
 		city = City.get(city.id == city_id)
@@ -120,48 +120,48 @@ def get_city_by_id(city_id):
 		abort(404)
 
 
-@app.route('/states/<state_id>/cities', methods=['PUT'])
-def update_city_by_id(state_id):
-	"""
-	Update city
-	Updates existing city and appends to database
-	---
-	tags:
-		- state
-	parameters:
-		-
-			name: city_id
-			in: path
-			type: integer
-			required: True
-			description: city id
-	responses:
-		409:
-			descripton: name is already taken in the database,
-		200:
-			description: the City representation
-			schema:
-				$ref: '#/definitions/City'
-		404:
-			descripton: state was not updated, error occured
-	"""
-	try:
-		city = City.get(City.id == city_id)
-		for key in request.values:
-			if key == 'name':
-				return jsonify({'msg' : 'City is already taken'}), 409
-			if key == 'updated_at' or key == 'created_at':
-				 continue
-			else:
-				 setattr(state, key, request.values.get(key))
-		city.save()
-		return jsonify(city.to_hash()), 200
-	except:
-		abort(404)
+# @app.route('/states/<state_id>/cities', methods=['PUT'])
+# def update_city_by_id(state_id):
+# 	"""
+# 	Update city
+# 	Updates existing city and appends to database
+# 	---
+# 	tags:
+# 		- state
+# 	parameters:
+# 		-
+# 			name: city_id
+# 			in: path
+# 			type: integer
+# 			required: True
+# 			description: city id
+# 	responses:
+# 		409:
+# 			descripton: name is already taken in the database,
+# 		200:
+# 			description: the City representation
+# 			schema:
+# 				$ref: '#/definitions/City'
+# 		404:
+# 			descripton: state was not updated, error occured
+# 	"""
+# 	try:
+# 		city = City.get(City.id == city_id)
+# 		for key in request.values:
+# 			if key == 'name':
+# 				return jsonify({'msg' : 'City is already taken'}), 409
+# 			if key == 'updated_at' or key == 'created_at':
+# 				 continue
+# 			else:
+# 				 setattr(state, key, request.values.get(key))
+# 		city.save()
+# 		return jsonify(city.to_hash()), 200
+# 	except:
+# 		abort(404)
 
 
 @app.route('/states/<state_id>/cities', methods=['DELETE'])
-def delete_city_by_id(state_id):
+def delete_city_by_id(city_id):
 	"""
 	Delete city
 	Removes city specified by id from database
@@ -179,7 +179,7 @@ def delete_city_by_id(state_id):
 		200:
 			descripton: sucessfully deletes city
 		404:
-			descripton: state was not delted from database
+			descripton: city was not delted from database
 	"""
 	try:
 		city = City.get(City.id == city_id)
