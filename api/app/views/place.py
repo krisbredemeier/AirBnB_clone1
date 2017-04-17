@@ -61,7 +61,43 @@ def get_place_by_id(place_id):
 		abort(404)
 
 @app.route('/places/<place_id>', methods=['PUTS'])
-def update_place(place_id):
+def update_place_by_id(place_id):
+"""
+Update place
+Updates existing place and appends to database
+---
+tags:
+    - place
+parameters:
+    -
+        name: place_id
+        in: path
+        type: integer
+        required: True
+        description: place id
+responses:
+    409:
+        descripton: notify that owner and city can't be changed
+    200:
+        description: the User representation
+        schema:
+            $ref: '#/definitions/User'
+    404:
+        descripton: user was not updated, error occured
+"""
+try:
+    place = Place.get(Place.id == place_id)
+    for key in request.values:
+        if key == 'owner' or 'city':
+            return jsonify({'msg' : 'owner and city can not be changed'}), 409
+        if key == 'updated_at' or key == 'created_at':
+             continue
+        else:
+             setattr(user, key, request.values.get(key))
+    place.save()
+    return jsonify(place.to_hash()), 200
+except:
+    abort(404)
 
 @app.route('/places/<place_id>', methods=['DELETE'])
 def delete_place_by_id(state_id):
