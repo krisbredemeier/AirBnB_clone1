@@ -7,11 +7,14 @@ class State(BaseModel):
 
     def __init__(self, *args, **kwargs):
         super(BaseModel, self).__init__(args, kwargs)
+        if kwargs is not None:	
+            for k, v in kwargs.items():
+                setattr(self, k, v)
         
     def to_hash(self):
         return {
-            "id": self.__id,
-            "created_at": self.__created_at,
-            "updated_at": self.__updated_at,
-            "name": self.__name,
+            "id": self.id,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+            "name": self.name,
         }

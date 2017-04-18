@@ -36,7 +36,7 @@ def create_state():
         - state
     parameters:
         -
-            name: state_name
+            name: name
             in: form
             type: string
             required: True
@@ -60,24 +60,24 @@ def create_state():
                         type: date-time
                         description: Datetime of the last item update
                         required: true
-                    state_name:
+                    name:
                         type: string
                         description: name of the state
                         required: true
         409:
             description: email already exists
     """
-	try:
-		state = State(
-			state_name=str(request.form['name']),
-		)
-		state.save()
-		return jsonify(state.to_hash())
-	except:
-		import sys
-		print("Unexpected error:", sys.exc_info())
+    try:
+        state = State(
+            name=str(request.form['name']),
+        )
+        state.save()
+        return jsonify(state.to_hash())
+    except:
+        import sys
+        print("Unexpected error:", sys.exc_info())
 
-		return jsonify({'code' : 10000, 'msg' : "State name already exhists"}), 409
+        return jsonify({'code' : 10000, 'msg' : "State name already exhists"}), 409
 
 @app.route('/states/<state_id>', methods=['GET'])
 def get_state_by_id(state_id):
@@ -124,21 +124,25 @@ def update_state_by_id(state_id):
 			type: integer
 			required: True
 			description: state id
+		-
+			name: name
+			in: form
+			type: string
+			required: True
+			description: the name of the state
 	responses:
-		409:
-			descripton: name is already taken in the database,
 		200:
-			description: the State representation
+			descripton: the State representation
 			schema:
 				$ref: '#/definitions/State'
 		404:
 			descripton: state was not updated, error occured
+		409:
+			descripton: name is already taken in the database,
 	"""
 	try:
 		state = State.get(State.id == state_id)
 		for key in request.values:
-			if key == 'name':
-				return jsonify({'msg' : 'Name is already taken'}), 409
 			if key == 'updated_at' or key == 'created_at':
 				 continue
 			else:

@@ -16,7 +16,7 @@ def list_places():
 	This will list all places in the database
 	---
 	tags:
-		- places
+		- place
 	responses:
 		200:
 			description: return list of all places
@@ -31,57 +31,67 @@ def list_places():
 	return jsonify(places), 200
 
 @app.route('/places', methods=['POST'])
-def creat_place():
-"""
-Create a new place
-Creates a new place and appends to database
----
-tags:
-    - place
-parameters:
-    -
-        name: place_name
-        in: form
-        type: string
-        required: True
-        description: the name of the place
+def create_place():
+	"""
+	Create a new place
+	Creates a new place and appends to database
+	---
+	tags:
+		- place
+	parameters:
+		-
+			name: name
+			in: form
+			type: string
+			required: True
+			description: the name of the place
 
-responses:
-    200:
-        description: the Place representation
-        schema:
-            id: Place
-            properties:
-                id:
-                    type: number
-                    description: Unique identifier
-                    required: true
-                created_at:
-                    type: date-time
-                    description: Datetime of the item creation
-                    required: true
-                updated_at:
-                    type: date-time
-                    description: Datetime of the last item update
-                    required: true
-                place_name:
-                    type: string
-                    description: name of the place
-                    required: true
-    409:
-        description: place already exists
-"""
-try:
-    place = Place(
-        place_name=str(request.form['name']),
-    )
-    place.save()
-    return jsonify(place.to_hash())
-except:
-    import sys
-    print("Unexpected error:", sys.exc_info())
+	responses:
+		200:
+			description: the Place representation
+			schema:
+				id: Place
+				properties:
+					id:
+						type: number
+						description: Unique identifier
+						required: true
+					created_at:
+						type: date-time
+						description: Datetime of the item creation
+						required: true
+					updated_at:
+						type: date-time
+						description: Datetime of the last item update
+						required: true
+					name:
+						type: string
+						description: name of the place
+						required: true
+		409:
+			description: place already exists
+	"""
+	
+	try:
+		place = Place(
+			name=request.form.get('name'),
+			owner_id=request.form.get('owner_id'),
+			city_id=request.form.get('city_id'),
+			description=str(request.form.get('description', "")),
+			number_rooms=int(request.form.get('number_rooms', 0)),
+			number_bathrooms=int(request.form.get('number_bathrooms', 0)),
+			max_guest=int(request.form.get('max_guest', 0)),
+			price_by_night=int(request.form.get('price_by_night', 0)),
+			latitude=float(request.form.get('latitude', 0.0)),
+			longitude=float(request.form.get('longitude', 0.0))
+		)
+		place.save()
+		return jsonify(place.to_hash())
+	except:
+		import sys
+		print("Unexpected error:", sys.exc_info())
 
-    return jsonify({'code' : 10000, 'msg' : "Place name already exhists"}), 409
+		return jsonify({'code' : 10000, 'msg' : "Place name already exhists"}), 409
 
 
 @app.route('/places/<place_id>', methods=['GET'])
@@ -113,47 +123,47 @@ def get_place_by_id(place_id):
 	except:
 		abort(404)
 
-@app.route('/places/<place_id>', methods=['PUTS'])
+@app.route('/places/<place_id>', methods=['PUT'])
 def update_place_by_id(place_id):
-    """
-    Update place
-    Updates existing place and appends to database
-    ---
-    tags:
-        - place
-    parameters:
-        -
-            name: place_id
-            in: path
-            type: integer
-            required: True
-            description: place id
-    responses:
-        409:
-            descripton: notify that owner and city can't be changed
-        200:
-            description: the Place representation
-            schema:
-                $ref: '#/definitions/Place'
-        404:
-            descripton: user was not updated, error occured
-    """
-    try:
-        place = Place.get(Place.id == place_id)
-        for key in request.values:
-            if key == 'owner' or 'city':
-                return jsonify({'msg' : 'owner and/or city can not be changed'}), 409
-            if key == 'updated_at' or key == 'created_at':
-                 continue
-            else:
-                 setattr(place, key, request.values.get(key))
-        place.save()
-        return jsonify(place.to_hash()), 200
-    except:
-        abort(404)
+	"""
+	Update place
+	Updates existing place and appends to database
+	---
+	tags:
+		- place
+	parameters:
+		-
+			name: place_id
+			in: path
+			type: integer
+			required: True
+			description: place id
+	responses:
+		409:
+			descripton: notify that owner and city can't be changed
+		200:
+			description: the Place representation
+			schema:
+				$ref: '#/definitions/Place'
+		404:
+			descripton: user was not updated, error occured
+	"""
+	try:
+		place = Place.get(Place.id == place_id)
+		for key in request.values:
+			if key == 'owner_id' or key == 'city_id':
+				return jsonify({'msg' : 'owner and/or city can not be changed'}), 409
+			if key == 'updated_at' or key == 'created_at':
+				 continue
+			else:
+				 setattr(place, key, request.values.get(key))
+		place.save()
+		return jsonify(place.to_hash()), 200
+	except:
+		abort(404)
 
 @app.route('/places/<place_id>', methods=['DELETE'])
-def delete_place_by_id(state_id):
+def delete_place_by_id(place_id):
 	"""
 	Delete place
 	Removes place specified by id from database
@@ -182,32 +192,32 @@ def delete_place_by_id(state_id):
 
 # @app.route('/states/<state_id>/cities/<city_id>/places', methods=['GET'])
 # def list_place_by_city(city_id):
-#     """
-#     Get place by city id
-#     list of the given places using city_id in databse
-#     ---
-#     tags:
-#         - place
-#     parameters:
-#         -
-#             name: place_id
-#             in: path
-#             type: integer
-#             required: True
-#             description: place id
-#     responses:
-#         200:
-#             description: the Place representation
-#             schema:
-#                 $ref: '#/definitions/Place'
-#         404:
-#             descripton: aboarts route, can not list place by city id
-#     """
-#     try:
-#         place = Place.get(Place.id == place_id)
-#         return jsonify(place.to_hash())
-#     except:
-#         abort(404)
+#	 """
+#	 Get place by city id
+#	 list of the given places using city_id in databse
+#	 ---
+#	 tags:
+#		 - place
+#	 parameters:
+#		 -
+#			 name: place_id
+#			 in: path
+#			 type: integer
+#			 required: True
+#			 description: place id
+#	 responses:
+#		 200:
+#			 description: the Place representation
+#			 schema:
+#				 $ref: '#/definitions/Place'
+#		 404:
+#			 descripton: aboarts route, can not list place by city id
+#	 """
+#	 try:
+#		 place = Place.get(Place.id == place_id)
+#		 return jsonify(place.to_hash())
+#	 except:
+#		 abort(404)
 
-@app.route('/states/<state_id>/cities/<city_id>/places', methods=['POST'])
-def creae_new_place(city_id):
+#@app.route('/states/<state_id>/cities/<city_id>/places', methods=['POST'])
+#def creae_new_place(city_id):
