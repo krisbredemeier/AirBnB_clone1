@@ -26,92 +26,89 @@ def list_amenities():
 				items:
 					$ref: '#/definitions/Amenity'
 	"""
-	amenity = []
+	amenities = []
 	for amenity in Amenity.select():
-		amenties.append(amenity.to_hash())
-	return jsonify(amenites), 200
+		amenities.append(amenity.to_hash())
+	return jsonify(amenities), 200
 
- @app.route('/amenities', methods=['POST'])
+@app.route('/amenities', methods=['POST'])
 def creat_amenity():
-"""
-Create a new amenity
-Creates a new amenity and appends to database
----
-tags:
-    - amenity
-parameters:
-    -
-        name: amenity_name
-        in: form
-        type: string
-        required: True
-        description: the name of the amenity
+	"""
+	Create a new amenity
+	Creates a new amenity and appends to database
+	---
+	tags:
+		- amenity
+	parameters:
+		-
+			name: name
+			in: form
+			type: string
+			required: True
+			description: the name of the amenity
 
-responses:
-    200:
-        description: the Amenity representation
-        schema:
-            id: Amenity
-            properties:
-                id:
-                    type: number
-                    description: Unique identifier
-                    required: true
-                created_at:
-                    type: date-time
-                    description: Datetime of the item creation
-                    required: true
-                updated_at:
-                    type: date-time
-                    description: Datetime of the last item update
-                    required: true
-                amenity_name:
-                    type: string
-                    description: name of the amenity
-                    required: true
-    409:
-        description: amenity already exists
-"""
-try:
-    amenity = amenity
-        amenity_name=str(request.form['name']),
-    )
-    amenity.save()
-    return jsonify(amentiy.to_hash())
-except:
-    import sys
-    print("Unexpected error:", sys.exc_info())
-
-    return jsonify({'code' : 10000, 'msg' : "Amenity name already exhists"}), 409
+	responses:
+		200:
+			description: the Amenity representation
+			schema:
+				id: Amenity
+				properties:
+					id:
+						type: number
+						description: Unique identifier
+						required: true
+					created_at:
+						type: date-time
+						description: Datetime of the item creation
+						required: true
+					updated_at:
+						type: date-time
+						description: Datetime of the last item update
+						required: true
+					name:
+						type: string
+						description: name of the amenity
+						required: true
+		409:
+			description: amenity already exists
+	"""
+	try:
+		amenity = Amenity(
+			name=str(request.form['name']),
+		)
+		amenity.save()
+		return jsonify(amenity.to_hash())
+	except:
+		return jsonify({'code' : 10000, 'msg' : "Amenity name already exists"}), 409
 
 @app.route('/amenities/<amenity_id>', methods=['GET'])
 def list_amenity_by_id(amenity_id):
-    """
-    Get amenity by amenity id
-    list of the given book using amenity_id in databse
-    ---
-    tags:
-        - amenity
-    parameters:
-        -
-            name: amenity_id
-            in: path
-            type: integer
-            required: True
-            description: book id
-    responses:
-        200:
-            description: the Amenity representation
-            schema:
-                $ref: '#/definitions/Amenity'
-        404:
-            descripton: aboarts route, can not list amenity by id
-    """
-    try:
-        amenity = Amenity.get(Amenity.id == amentiy_id)
-        return jsonify(amenity.to_hash())
-    except:
-        abort(404)
+	"""
+	Get amenity by amenity id
+	list of the given book using amenity_id in databse
+	---
+	tags:
+		- amenity
+	parameters:
+		-
+			name: amenity_id
+			in: path
+			type: integer
+			required: True
+			description: book id
+	responses:
+		200:
+			description: the Amenity representation
+			schema:
+				$ref: '#/definitions/Amenity'
+		404:
+			descripton: aboarts route, can not list amenity by id
+	"""
+	try:
+		amenity = Amenity.get(Amenity.id == amenity_id)
+		return jsonify(amenity.to_hash())
+	except:
+		abort(404)
 
 @app.route('/amenities/<amenity_id>', methods=['DELETE'])
 def delete_amentiy_by_id(amenity_id):
@@ -120,7 +117,7 @@ def delete_amentiy_by_id(amenity_id):
 	Removes amenity specified by id from database
 	---
 	tags:
-		- amentiy
+		- amenity
 	parameters:
 		-
 			name: amentiy_id
@@ -128,6 +125,12 @@ def delete_amentiy_by_id(amenity_id):
 			type: integer
 			required: True
 			description: amentiy id
+		-
+			name: name
+			in: form
+			type: string
+			required: True
+			description: the name of the amenity
 	responses:
 		200:
 			descripton: sucessfully deletes amenity
@@ -135,7 +138,7 @@ def delete_amentiy_by_id(amenity_id):
 			descripton: amenity was not delted from database
 	"""
 	try:
-		amentiy = Amenity.get(Amenity.id == amentiy_id)
+		amenity = Amenity.get(Amenity.id == amenity_id)
 		amenity.delete_instance()
 		return jsonify({'msg' : 'success'}), 200
 	except:
@@ -165,7 +168,9 @@ def list_amenity_by_place(place_id):
 			descripton: aboarts route, can not list amenity by place id
 	"""
 	try:
-		amenity = Amenity.get(Amenity.id == amenity_id)
-		return jsonify(amenity.to_hash())
+		amenities = []
+		for amenity in Amenity.select().join(PlaceAmenity).where(PlaceAmenity.place_id == place_id):
+			amenities.append(amenity.to_hash())
+		return jsonify(amenities), 200
 	except:
 		abort(404)

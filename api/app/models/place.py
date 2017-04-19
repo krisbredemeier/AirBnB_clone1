@@ -19,20 +19,23 @@ class Place(BaseModel):
 
     def __init__(self, *args, **kwargs):
         super(BaseModel, self).__init__(args, kwargs)
+        if kwargs is not None:	
+            for k, v in kwargs.items():
+                setattr(self, k, v)
         
     def to_hash(self):
         return {
-            "id": self.__id,
-            "created_at": self.__created_at,
-            "updated_at": self.__updated_at,
-            "owner_id": User.id,
-            "city_id": City.id,
-            "name": self.__name,
-            "description": self.__description,
-            "number_rooms": self.__number_rooms,
-            "number_bathrooms": self.__number_bathrooms,
-            "max_guest": self.__max_guest,
-            "price_by_night": self.__price_by_night,
-            "latitude": self.__latitude,
-            "longitude": self.__longitude,
+            "id": self.id,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+            "owner_id": self.owner.id,
+            "city_id": self.city.id,
+            "name": self.name,
+            "description": self.description,
+            "number_rooms": self.number_rooms,
+            "number_bathrooms": self.number_bathrooms,
+            "max_guest": self.max_guest,
+            "price_by_night": self.price_by_night,
+            "latitude": self.latitude,
+            "longitude": self.longitude,
         }

@@ -118,7 +118,7 @@ def create_user():
 		import sys
 		print("Unexpected error:", sys.exc_info())
 
-		return jsonify({'code' : 10001, 'msg' : "State already exists""}), 409
+		return jsonify({'code' : 10001, 'msg' : "State already exists"}), 409
 
 
 @app.route('/users/<user_id>', methods=['GET'])
